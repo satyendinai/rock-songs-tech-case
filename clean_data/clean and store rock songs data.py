@@ -1,3 +1,4 @@
+
 import sys
 from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
@@ -9,7 +10,6 @@ from pyspark.sql.types import StringType, IntegerType
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
-
 
 # Raw source data
 file_path = "s3://rockstars-techcase-rock-songs-s3/rock-songs-raw-data.txt"
@@ -32,8 +32,8 @@ df_misaligned_colum_rows = (
         .withColumn("COMBINED", regexp_extract(col("value"), r'[^;]* by [^;]*', 0))
         .withColumn("COMBINED", trim(regexp_replace(col("COMBINED"), r'"', "")))
         # Use last " by " for splitting song and artist
-        .withColumn("RAW_SONG", trim(regexp_extract(col("COMBINED"), r'^(.*) by [^ ]+.*$', 1)))
-        .withColumn("RAW_ARTIST", trim(regexp_extract(col("COMBINED"), r' by ([^ ]+.*)$', 1)))
+        .withColumn("RAW_SONG", trim(regexp_extract(col("COMBINED"), r'^(.*) by ([^ ]+.*)$', 1)))
+        .withColumn("RAW_ARTIST", trim(regexp_extract(col("COMBINED"), r'^(.*) by ([^ ]+.*)$', 2)))
         .withColumn("First?", regexp_extract(col("value"), r'\b(0|1)\b', 1))
         .drop("value")
 )
@@ -56,8 +56,8 @@ df_correct_aligned_column_rows = df_correct_aligned_column_rows.filter(
 # Extract columns using regex (split by last " by ")
 df_correct_aligned_column_rows = (
     df_correct_aligned_column_rows
-        .withColumn("RAW_SONG", trim(regexp_extract(col("COMBINED"), r'^(.*) by [^ ]+.*$', 1)))
-        .withColumn("RAW_ARTIST", trim(regexp_extract(col("COMBINED"), r' by ([^ ]+.*)$', 1)))
+        .withColumn("RAW_SONG", trim(regexp_extract(col("COMBINED"), r'^(.*) by ([^ ]+.*)$', 1)))
+        .withColumn("RAW_ARTIST", trim(regexp_extract(col("COMBINED"), r'^(.*) by ([^ ]+.*)$', 2)))
 )
 
 # Set column order
