@@ -1,6 +1,15 @@
-from pyspark.sql import SparkSession
+import sys
+from awsglue.utils import getResolvedOptions
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
 from pyspark.sql.functions import regexp_extract, col, trim, regexp_replace, from_unixtime
 from pyspark.sql.types import StringType, IntegerType
+
+# Initialize Glue and Spark
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+
 
 # Raw source data
 file_path = "s3://rockstars-techcase-rock-songs-s3/rock-songs-raw-data.txt"
