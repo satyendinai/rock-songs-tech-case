@@ -1,7 +1,16 @@
+import sys
 import requests
 import re
+from awsglue.utils import getResolvedOptions
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
 from pyspark.sql.functions import col, udf, regexp_replace
 from pyspark.sql.types import StringType
+
+# Initialize Glue and Spark
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
 
 # Spotify api creds
 CLIENT_ID = "a50b3c06af264d76ba38743ca13c59c9"
